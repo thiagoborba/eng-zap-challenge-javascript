@@ -1,0 +1,1 @@
+export { default as Title } from '@material-ui/core/Typography';
