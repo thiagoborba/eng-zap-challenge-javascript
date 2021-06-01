@@ -3,6 +3,10 @@ import { getProperties } from '../../api';
 import { Loader } from '../../Components/Loader'
 import { Title } from '../../Components/Title';
 import { Spacing } from '../../Components/Spacing';
+import { Card } from '../../Components/Card'
+import { Grid } from '@material-ui/core'
+import { Button, Box } from '@material-ui/core'
+import { Pagination } from '@material-ui/lab';
 
 const BUSINESS_TYPE = {
   SALE: "SALE",
@@ -15,16 +19,40 @@ const ZAP_MINIMAL_SELLING_PRICE = 600000
 const VIVA_REAL_MAXIMUM_RENTAL_PRICE  = 4000
 const VIVA_REAL_MAXIMUM_SELLING_PRICE = 700000
 
+const VIEW = {
+  ZAP: 'ZAP',
+  VIVA: 'VIVA'
+}
+
+const PAGE_SIZE = 20
+
 export const Home = () => {
-  const [{ loading, zapProprieties, vivaRealProprieties, proprieties }, setState] = useState({
+  const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState({
     loading: false,
     proprieties: [],
     zapProprieties: [],
-    vivaRealProprieties: []
+    vivaRealProprieties: [],
+    view: '',
+    pagination: {
+      ZAP: {
+        totalOfPages: 1,
+        currentPage: 1,
+      },
+      VIVA: {
+        totalOfPages: 1,
+        currentPage: 1,
+      }
+    }
   })
 
-  const memoZapProprieties = useMemo(() => console.log(zapProprieties), [zapProprieties])
-  const memoVivaRealProprieties = useMemo(() => console.log(vivaRealProprieties), [vivaRealProprieties])
+  const isZapView = view === VIEW.ZAP
+  const isVivaView = view === VIEW.VIVA
+
+  const currentPage = pagination[view]?.currentPage
+  const totalOfPages = pagination[view]?.totalOfPages
+
+  const memoZapProprieties = useMemo(() => renderCard(zapProprieties), [zapProprieties])
+  const memoVivaRealProprieties = useMemo(() => renderCard(vivaRealProprieties), [vivaRealProprieties])
 
   useEffect(() => {
     fetchProprieties();
@@ -68,11 +96,50 @@ export const Home = () => {
       if (isEligibleForViva) vivaRealProprieties.push(property)
     })
 
-    setState(prevState => ({ ...prevState, zapProprieties, vivaRealProprieties }))
+    const pagination = {
+      ZAP: {
+        totalOfPages: Number((zapProprieties.length / PAGE_SIZE).toFixed(0)),
+        currentPage: 1,
+      },
+      VIVA: {
+        totalOfPages: Number((vivaRealProprieties.length / PAGE_SIZE).toFixed(0)),
+        currentPage: 1,
+      }
+    };
+
+    setState(prevState => ({ ...prevState, zapProprieties, vivaRealProprieties, pagination }))
   }
 
-  function renderCards () {
-    
+  function renderCard (proprieties) {
+    return proprieties?.map(property =>
+      <Grid item key={property.id}>
+        <Card
+          property={property}
+        />
+      </Grid>
+    )
+  }
+
+  function paginate(array) {
+    return array.slice(
+      (pagination[view].currentPage - 1) * PAGE_SIZE,
+      pagination[view].currentPage * PAGE_SIZE
+    )
+  }
+
+  function handlePaginationChange (_, page) {
+    setState(prevState => (
+      {
+        ...prevState,
+        pagination: {
+          ...prevState.pagination,
+          [view]: {
+            ...prevState.pagination[view],
+            currentPage: page
+          }
+        }
+      } )
+    )
   }
 
   return (
@@ -82,6 +149,44 @@ export const Home = () => {
         Grupo Zap
       </Title>
       <Spacing height='40px'/>
+      <Title variant='h4' align='center'>
+        Clique abaixo para filtrar os imóveis por portal 
+      </Title>
+      <Spacing height='40px'/>
+      <Box style={{ display: 'flex', justifyContent: 'center', }}>
+        <Button
+          onClick={() => setState(prevState => ({ ...prevState, view: VIEW.ZAP }))}
+        >
+          Zap
+        </Button>
+        <Button
+          onClick={() => setState(prevState => ({ ...prevState, view: VIEW.VIVA }))}
+        >
+          VIVA
+        </Button>
+      </Box>
+      <Spacing height='40px'/>
+
+      <Grid
+        spacing={1}
+        container
+        alignItems='center'
+        justify='center'
+      >
+        { isZapView && paginate(memoZapProprieties) }
+        { isVivaView && paginate(memoVivaRealProprieties) }
+      </Grid>
+
+      { view && (
+        <Box>
+          <Spacing height='40px'/>
+          <Box style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+            <Title>Página: {currentPage}</Title>
+            <Spacing height='16px'/>
+            <Pagination count={totalOfPages} page={currentPage} onChange={handlePaginationChange} />
+          </Box>
+        </Box>
+      ) }
     </div>
   )
 }
