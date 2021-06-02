@@ -1,1 +1,12 @@
-export { default as Title } from '@material-ui/core/Typography';
+import { Typography } from '@material-ui/core';
+
+export const Title = ({ ...props }) => {
+  return (
+    <Typography
+      { ...props }
+      style={{ margin: 0 }}
+    />
+  )
+}
+
+export default Title
