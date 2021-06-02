@@ -1,49 +1,37 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { getProperties } from '../../api';
-import { Loader } from '../../Components/Loader'
-import { Title } from '../../Components/Title';
-import { Spacing } from '../../Components/Spacing';
-import { Card } from '../../Components/Card'
-import { Grid } from '@material-ui/core'
-import { Button, Box } from '@material-ui/core'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Button } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
+import { getProperties } from '../../api';
+import { Card, Grid, Loader, Spacing, Title } from '../../Components';
+import {
+  BUSINESS_TYPE,
+  PAGE_SIZE, VIEW,
+  VIVA_REAL_MAXIMUM_RENTAL_PRICE,
+  VIVA_REAL_MAXIMUM_SELLING_PRICE,
+  ZAP_MINIMAL_RENTAL_PRICE,
+  ZAP_MINIMAL_SELLING_PRICE
+} from '../../constants';
 
-const BUSINESS_TYPE = {
-  SALE: "SALE",
-  RENTAL: 'RENTAL'
+const INITIAL_STATE = {
+  loading: false,
+  proprieties: [],
+  zapProprieties: [],
+  vivaRealProprieties: [],
+  view: '',
+  pagination: {
+    ZAP: {
+      totalOfPages: 1,
+      currentPage: 1,
+    },
+    VIVA: {
+      totalOfPages: 1,
+      currentPage: 1,
+    }
+  }
 }
-
-const ZAP_MINIMAL_RENTAL_PRICE = 3500
-const ZAP_MINIMAL_SELLING_PRICE = 600000
-
-const VIVA_REAL_MAXIMUM_RENTAL_PRICE  = 4000
-const VIVA_REAL_MAXIMUM_SELLING_PRICE = 700000
-
-const VIEW = {
-  ZAP: 'ZAP',
-  VIVA: 'VIVA'
-}
-
-const PAGE_SIZE = 20
 
 export const Home = () => {
-  const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState({
-    loading: false,
-    proprieties: [],
-    zapProprieties: [],
-    vivaRealProprieties: [],
-    view: '',
-    pagination: {
-      ZAP: {
-        totalOfPages: 1,
-        currentPage: 1,
-      },
-      VIVA: {
-        totalOfPages: 1,
-        currentPage: 1,
-      }
-    }
-  })
+  const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState(INITIAL_STATE)
 
   const isZapView = view === VIEW.ZAP
   const isVivaView = view === VIEW.VIVA
@@ -54,6 +42,8 @@ export const Home = () => {
   const memoZapProprieties = useMemo(() => renderCard(zapProprieties), [zapProprieties])
   const memoVivaRealProprieties = useMemo(() => renderCard(vivaRealProprieties), [vivaRealProprieties])
 
+  const memoizedHandlePaginationChange = useCallback(handlePaginationChange, [view])
+
   useEffect(() => {
     fetchProprieties();
   }, []);
@@ -61,6 +51,10 @@ export const Home = () => {
   useEffect(() => {
     setProprietiesByAgency(proprieties)
   }, [proprieties])
+
+  useEffect(() => {
+    memoizedHandlePaginationChange(1)
+  }, [memoizedHandlePaginationChange])
 
   async function fetchProprieties() {
     try {
@@ -112,7 +106,7 @@ export const Home = () => {
 
   function renderCard (proprieties) {
     return proprieties?.map(property =>
-      <Grid item key={property.id}>
+      <Grid item xs key={property.id}>
         <Card
           property={property}
         />
@@ -127,19 +121,18 @@ export const Home = () => {
     )
   }
 
-  function handlePaginationChange (_, page) {
-    setState(prevState => (
-      {
-        ...prevState,
-        pagination: {
-          ...prevState.pagination,
-          [view]: {
-            ...prevState.pagination[view],
-            currentPage: page
-          }
+
+  function handlePaginationChange(page) {
+    setState(prevState => ({
+      ...prevState,
+      pagination: {
+        ...prevState.pagination,
+        [view]: {
+          ...prevState.pagination[view],
+          currentPage: page
         }
-      } )
-    )
+      }
+    }))
   }
 
   return (
@@ -156,22 +149,19 @@ export const Home = () => {
       <Box style={{ display: 'flex', justifyContent: 'center', }}>
         <Button
           onClick={() => setState(prevState => ({ ...prevState, view: VIEW.ZAP }))}
-        >
-          Zap
-        </Button>
+          children='ZAP'
+        />
         <Button
           onClick={() => setState(prevState => ({ ...prevState, view: VIEW.VIVA }))}
-        >
-          VIVA
-        </Button>
+          children='VIVA'
+        />
       </Box>
       <Spacing height='40px'/>
 
       <Grid
-        spacing={1}
         container
-        alignItems='center'
         justify='center'
+        alignItems='center'
       >
         { isZapView && paginate(memoZapProprieties) }
         { isVivaView && paginate(memoVivaRealProprieties) }
@@ -183,7 +173,7 @@ export const Home = () => {
           <Box style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
             <Title>Página: {currentPage}</Title>
             <Spacing height='16px'/>
-            <Pagination count={totalOfPages} page={currentPage} onChange={handlePaginationChange} />
+            <Pagination color="primary" count={totalOfPages} page={currentPage} onChange={(_, page) => handlePaginationChange(page)} />
           </Box>
         </Box>
       ) }
