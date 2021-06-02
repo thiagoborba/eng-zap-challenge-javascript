@@ -1,10 +1,17 @@
 import React from 'react'
 import { Routes } from './routes'
-import { Container } from '@material-ui/core';
+import { Container, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  root: {
+    padding: 32
+  }
+})
 
 function App() {
+  const classes = useStyles()
   return (
-    <Container>
+    <Container className={classes.root}>
       <Routes />
     </Container>
   );
