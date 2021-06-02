@@ -25,7 +25,7 @@ const useStyles = makeStyles({
     objectFit: 'cover',
     width: '100%',
     height: '100%',
-  }
+  },
 })
 
 function getBusinessLabel(businessType) {
@@ -33,9 +33,8 @@ function getBusinessLabel(businessType) {
     case BUSINESS_TYPE.SALE:
       return 'venda'
     case BUSINESS_TYPE.RENTAL:
-      return 'aluguel'
     default:
-      break;
+      return 'aluguel'
   }
 }
 
@@ -45,19 +44,18 @@ function getPriceLabel (pricingInfos) {
     case BUSINESS_TYPE.SALE:
       return `R$ ${price}`
     case BUSINESS_TYPE.RENTAL:
-      return `R$ ${rentalTotalPrice}/Mês`
     default:
-      break;
+      return `R$ ${rentalTotalPrice}/Mês`
   }
 }
 
-export const Card = ({ property, onClick }) => {
+export const Card = ({ property, onClick, ...props }) => {
   const classes = useStyles()
 
   const { address: { city, neighborhood } } = property
 
   return (
-    <MaterialCard onClick={onClick} className={classes.card}>
+    <MaterialCard { ...props } onClick={() => onClick(property)} className={classes.card}>
       <CardContent>
         <Title variant='h5'>
           Imovel para {getBusinessLabel(property.pricingInfos.businessType)}
@@ -67,14 +65,18 @@ export const Card = ({ property, onClick }) => {
         { city } - { neighborhood }s
         </Title>        
         <Spacing height='8px' />
-        <Carousel autoPlay={false}>
+        <Carousel
+          autoPlay={false}
+          navButtonsAlwaysVisible={true}
+          indicators={false}
+        >
           {property.images.map(img => (
             <Box className={classes.box} key={property.id} >
               <img alt='apartment' className={classes.img} src={img} />
             </Box>
           ))}
         </Carousel>
-        <Spacing height='16px' />
+        <Spacing height='24px' />
         <Title paragraph>
           { getPriceLabel(property.pricingInfos) }
         </Title>
