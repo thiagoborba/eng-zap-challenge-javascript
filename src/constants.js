@@ -15,3 +15,8 @@ export const VIEW = {
 }
 
 export const PAGE_SIZE = 20
+
+export const PAGE = {
+  HOME: () => '/',
+  DETAILS: () => '/details'
+}
