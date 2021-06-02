@@ -5,6 +5,7 @@ import { getProperties } from '../../api';
 import { Card, Grid, Loader, Spacing, Title } from '../../Components';
 import {
   BUSINESS_TYPE,
+  PAGE,
   PAGE_SIZE, VIEW,
   VIVA_REAL_MAXIMUM_RENTAL_PRICE,
   VIVA_REAL_MAXIMUM_SELLING_PRICE,
@@ -30,7 +31,7 @@ const INITIAL_STATE = {
   }
 }
 
-export const Home = () => {
+export const Home = ({ history }) => {
   const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState(INITIAL_STATE)
 
   const isZapView = view === VIEW.ZAP
@@ -39,9 +40,9 @@ export const Home = () => {
   const currentPage = pagination[view]?.currentPage
   const totalOfPages = pagination[view]?.totalOfPages
 
-  const memoZapProprieties = useMemo(() => renderCard(zapProprieties), [zapProprieties])
-  const memoVivaRealProprieties = useMemo(() => renderCard(vivaRealProprieties), [vivaRealProprieties])
-
+  const memoizedRenderCard = useCallback(renderCard, [history])
+  const memoizedZapProprieties = useMemo(() => memoizedRenderCard(zapProprieties), [zapProprieties, memoizedRenderCard])
+  const memoizedVivaRealProprieties = useMemo(() => memoizedRenderCard(vivaRealProprieties), [vivaRealProprieties, memoizedRenderCard])
   const memoizedHandlePaginationChange = useCallback(handlePaginationChange, [view])
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export const Home = () => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
       const proprieties = await getProperties();
+
       setState(prevState => ({ ...prevState, proprieties }))
     } catch (error) {
       console.error(error)
@@ -105,9 +107,11 @@ export const Home = () => {
   }
 
   function renderCard (proprieties) {
-    return proprieties?.map(property =>
+    return proprieties?.map((property, i) =>
       <Grid item xs key={property.id}>
         <Card
+          data-testid={`card-${i}`}
+          onClick={() => history.push(PAGE.DETAILS())}
           property={property}
         />
       </Grid>
@@ -137,7 +141,7 @@ export const Home = () => {
 
   return (
     <div>
-      <Loader show={loading}/>
+      <Loader data-testid='loader' show={loading}/>
       <Title variant='h3' align='center'>
         Grupo Zap
       </Title>
@@ -148,10 +152,12 @@ export const Home = () => {
       <Spacing height='40px'/>
       <Box style={{ display: 'flex', justifyContent: 'center', }}>
         <Button
+          data-testid='zap-button'
           onClick={() => setState(prevState => ({ ...prevState, view: VIEW.ZAP }))}
           children='ZAP'
         />
         <Button
+          data-testid='viva-button'
           onClick={() => setState(prevState => ({ ...prevState, view: VIEW.VIVA }))}
           children='VIVA'
         />
@@ -163,8 +169,8 @@ export const Home = () => {
         justify='center'
         alignItems='center'
       >
-        { isZapView && paginate(memoZapProprieties) }
-        { isVivaView && paginate(memoVivaRealProprieties) }
+        { isZapView && paginate(memoizedZapProprieties) }
+        { isVivaView && paginate(memoizedVivaRealProprieties) }
       </Grid>
 
       { view && (
@@ -173,7 +179,7 @@ export const Home = () => {
           <Box style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
             <Title>Página: {currentPage}</Title>
             <Spacing height='16px'/>
-            <Pagination color="primary" count={totalOfPages} page={currentPage} onChange={(_, page) => handlePaginationChange(page)} />
+            <Pagination data-testid='pagination' color="primary" count={totalOfPages} page={currentPage} onChange={(_, page) => handlePaginationChange(page)} />
           </Box>
         </Box>
       ) }
