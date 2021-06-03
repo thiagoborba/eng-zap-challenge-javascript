@@ -9,5 +9,4 @@ export * from './Pagination';
 export * from './Spacing';
 export * from './TextField';
 export * from './Title';
-export * from './Toast';
 export * from './Wrapper';
