@@ -29,7 +29,7 @@
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "551510210082.dkr.ecr.us-east-2.amazonaws.com/eng-zap-challenge-javascript",
+      "image": "551510210082.dkr.ecr.us-east-2.amazonaws.com/eng-zap-challenge-javascript:843c4da38a5f6becbd77dcc62bb03fe81d9df999",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
@@ -56,7 +56,7 @@
     "EXTERNAL",
     "EC2"
   ],
-  "taskDefinitionArn": "arn:aws:ecs:us-east-2:551510210082:task-definition/DeploymentContainer:1",
+  "taskDefinitionArn": "arn:aws:ecs:us-east-2:551510210082:task-definition/DeploymentContainer:3",
   "family": "DeploymentContainer",
   "requiresAttributes": [
     {
@@ -72,7 +72,7 @@
   ],
   "networkMode": null,
   "cpu": "1024",
-  "revision": 1,
+  "revision": 3,
   "status": "ACTIVE",
   "inferenceAccelerators": null,
   "proxyConfiguration": null,
