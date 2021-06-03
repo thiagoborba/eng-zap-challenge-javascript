@@ -3,7 +3,7 @@ import { Box, Card as MaterialCard, CardContent } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import Carousel from 'react-material-ui-carousel'
 import { Spacing, Title } from '../../Components'
-import { BUSINESS_TYPE } from '../../constants'
+import { getBusinessLabel, getPriceLabel } from '../../utils'
 
 const useStyles = makeStyles({
   card: {
@@ -28,27 +28,6 @@ const useStyles = makeStyles({
   },
 })
 
-function getBusinessLabel(businessType) {
-  switch (businessType) {
-    case BUSINESS_TYPE.SALE:
-      return 'venda'
-    case BUSINESS_TYPE.RENTAL:
-    default:
-      return 'aluguel'
-  }
-}
-
-function getPriceLabel (pricingInfos) {
-  const { businessType, price, rentalTotalPrice } = pricingInfos
-  switch (businessType) {
-    case BUSINESS_TYPE.SALE:
-      return `R$ ${price}`
-    case BUSINESS_TYPE.RENTAL:
-    default:
-      return `R$ ${rentalTotalPrice}/Mês`
-  }
-}
-
 export const Card = ({ property, onClick, ...props }) => {
   const classes = useStyles()
 
@@ -60,11 +39,7 @@ export const Card = ({ property, onClick, ...props }) => {
         <Title variant='h5'>
           Imovel para {getBusinessLabel(property.pricingInfos.businessType)}
         </Title>
-        <Spacing height='8px' />
-        <Title paragraph>
-        { city } - { neighborhood }s
-        </Title>        
-        <Spacing height='8px' />
+        <Spacing height='24px' />
         <Carousel
           autoPlay={false}
           navButtonsAlwaysVisible={true}
@@ -80,20 +55,17 @@ export const Card = ({ property, onClick, ...props }) => {
         <Title paragraph>
           { getPriceLabel(property.pricingInfos) }
         </Title>
+        <Spacing height='8px' />
+        <Title paragraph>
+          Área útil: { property.usableAreas }/M²
+        </Title>
+        <Spacing height='8px' />
         <Title paragraph>
           Quartos: { property.bedrooms }
         </Title>
         <Spacing height='8px' />
         <Title paragraph>
           Banheios: { property.bathrooms }
-        </Title>
-        <Spacing height='8px' />
-        <Title paragraph>
-          Banheios: { property.bathrooms }
-        </Title>
-        <Spacing height='8px' />
-        <Title paragraph>
-          Área útil: { property.usableAreas }/M²
         </Title>
         <Spacing height='8px' />
         <Title paragraph>
