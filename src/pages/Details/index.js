@@ -5,9 +5,8 @@ import { Container } from  '@material-ui/core'
 import { getBusinessLabel } from '../../utils'
 
 export const Details = ({ history }) => {
-  const { resetSelectedProperty, state }  = useContext()
+  const { resetSelectedProperty, state: { selectedProperty } }  = useContext()
 
-  const { selectedProperty } = state
   const {
     id,
     usableAreas,
