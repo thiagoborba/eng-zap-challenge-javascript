@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Button } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import { getProperties } from '../../api';
-import { Card, Grid, Loader, Spacing, Title } from '../../Components';
+import { Card, Grid, Loader, Spacing, Title, Button, Wrapper } from '../../Components';
 import {
   BUSINESS_TYPE,
   PAGE,
@@ -12,6 +12,7 @@ import {
   ZAP_MINIMAL_RENTAL_PRICE,
   ZAP_MINIMAL_SELLING_PRICE
 } from '../../constants';
+import { useContext } from '../../Store'
 
 const INITIAL_STATE = {
   loading: false,
@@ -31,8 +32,22 @@ const INITIAL_STATE = {
   }
 }
 
+const TOAST_ERROR_PAYLOAD = {
+  show: true,
+  type: 'error',
+  message: 'Não foi possível buscar os imoveis, tente novamente em alguns instantes'
+}
+
+const TOAST_SUCCESS_PAYLOAD = {
+  show: true,
+  type: 'success',
+  message: 'Imoveis baixados com sucesso'
+}
+
 export const Home = ({ history }) => {
   const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState(INITIAL_STATE)
+
+  const { setSelectedProperty, toast }  = useContext()
 
   const isZapView = view === VIEW.ZAP
   const isVivaView = view === VIEW.VIVA
@@ -40,7 +55,7 @@ export const Home = ({ history }) => {
   const currentPage = pagination[view]?.currentPage
   const totalOfPages = pagination[view]?.totalOfPages
 
-  const memoizedRenderCard = useCallback(renderCard, [history])
+  const memoizedRenderCard = useCallback(renderCard, [history, setSelectedProperty])
   const memoizedZapProprieties = useMemo(() => memoizedRenderCard(zapProprieties), [zapProprieties, memoizedRenderCard])
   const memoizedVivaRealProprieties = useMemo(() => memoizedRenderCard(vivaRealProprieties), [vivaRealProprieties, memoizedRenderCard])
   const memoizedHandlePaginationChange = useCallback(handlePaginationChange, [view])
@@ -61,10 +76,10 @@ export const Home = ({ history }) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
       const proprieties = await getProperties();
-
+      toast(TOAST_SUCCESS_PAYLOAD)
       setState(prevState => ({ ...prevState, proprieties }))
     } catch (error) {
-      console.error(error)
+      toast(TOAST_ERROR_PAYLOAD)
     } finally {
       setState((prevState) => ({ ...prevState, loading: false }));
     }
@@ -111,7 +126,10 @@ export const Home = ({ history }) => {
       <Grid item xs key={property.id}>
         <Card
           data-testid={`card-${i}`}
-          onClick={() => history.push(PAGE.DETAILS())}
+          onClick={() => {
+            history.push(PAGE.DETAILS())
+            setSelectedProperty(property)
+          }}
           property={property}
         />
       </Grid>
@@ -139,6 +157,13 @@ export const Home = ({ history }) => {
     }))
   }
 
+  async function handleClickButtonFilter (view) {
+    if (!proprieties.length) {
+      return await fetchProprieties()
+    }
+    setState(prevState => ({ ...prevState, view: view }))
+  }
+
   return (
     <div>
       <Loader data-testid='loader' show={loading}/>
@@ -150,18 +175,22 @@ export const Home = ({ history }) => {
         Clique abaixo para filtrar os imóveis por portal 
       </Title>
       <Spacing height='40px'/>
-      <Box style={{ display: 'flex', justifyContent: 'center', }}>
-        <Button
-          data-testid='zap-button'
-          onClick={() => setState(prevState => ({ ...prevState, view: VIEW.ZAP }))}
-          children='ZAP'
-        />
+      <Wrapper>
         <Button
           data-testid='viva-button'
-          onClick={() => setState(prevState => ({ ...prevState, view: VIEW.VIVA }))}
+          onClick={() => handleClickButtonFilter(VIEW.VIVA)}
           children='VIVA'
+          variant="contained"
+          color="secondary"
         />
-      </Box>
+        <Button
+          data-testid='zap-button'
+          onClick={() => handleClickButtonFilter(VIEW.ZAP)}
+          children='ZAP'
+          variant="contained"
+          color="primary"
+        />
+      </Wrapper>
       <Spacing height='40px'/>
 
       <Grid
