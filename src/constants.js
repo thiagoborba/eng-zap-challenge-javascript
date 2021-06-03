@@ -3,6 +3,14 @@ export const BUSINESS_TYPE = {
   RENTAL: 'RENTAL'
 }
 
+export const ZAP_BOUNDING_BOX = {
+  minlon: -46.693419,
+  maxlon: -46.641146,
+  minlat: -23.568704,
+  maxlat: -23.546686,
+}
+
+export const ZAP_MINIMAL_M2_VALUE = 3500
 export const ZAP_MINIMAL_RENTAL_PRICE = 3500
 export const ZAP_MINIMAL_SELLING_PRICE = 600000
 

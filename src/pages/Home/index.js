@@ -8,7 +8,9 @@ import {
   VIVA_REAL_MAXIMUM_RENTAL_PRICE,
   VIVA_REAL_MAXIMUM_SELLING_PRICE,
   ZAP_MINIMAL_RENTAL_PRICE,
-  ZAP_MINIMAL_SELLING_PRICE
+  ZAP_MINIMAL_SELLING_PRICE,
+  ZAP_MINIMAL_M2_VALUE,
+  ZAP_BOUNDING_BOX
 } from '../../constants';
 import { useContext } from '../../Store';
 
@@ -69,23 +71,106 @@ export const Home = ({ history }) => {
     }
   }
 
+  function isElegibleForZap(property) {
+    const {
+      pricingInfos: {
+        businessType,
+        rentalTotalPrice,
+        price
+      },
+      address: { 
+        geoLocation: {
+          location: {
+            lat: latitude,
+            lon: longitude
+          }
+        }
+      },
+      usableAreas
+    } = property
+
+    const isLatitudeBetweenBounding = ZAP_BOUNDING_BOX.minlat <= latitude && latitude <= ZAP_BOUNDING_BOX.maxlat
+    const isLongitudeBetweenBounding = ZAP_BOUNDING_BOX.minlon <= longitude && longitude <= ZAP_BOUNDING_BOX.maxlon
+    const isBetweenLocationBounding = isLatitudeBetweenBounding && isLongitudeBetweenBounding
+
+    let minimalSalesPriceByLocation = isBetweenLocationBounding ? (ZAP_MINIMAL_SELLING_PRICE - (ZAP_MINIMAL_SELLING_PRICE * 0.10)) : ZAP_MINIMAL_SELLING_PRICE
+
+    const rentalPrice = parseInt(rentalTotalPrice)
+    const salePrice= parseInt(price)
+    const hasUsableAreas = !!usableAreas
+    const isRental = businessType === BUSINESS_TYPE.RENTAL
+    const isSale = businessType === BUSINESS_TYPE.SALE
+    const hasMinimalRentalPrice = rentalPrice >= ZAP_MINIMAL_RENTAL_PRICE
+    const hasMinimalSalePrice = salePrice >= minimalSalesPriceByLocation
+    const m2Value = salePrice / usableAreas
+    const hasMinimalM2Value = m2Value > ZAP_MINIMAL_M2_VALUE
+
+    if(isSale) {
+      if (!hasUsableAreas) return false
+
+      return hasMinimalM2Value && hasMinimalSalePrice
+    }
+
+    return isRental && hasMinimalRentalPrice
+  }
+
+  function isElegibleForViva (property) {
+    const {
+      pricingInfos: {
+        businessType,
+        rentalTotalPrice,
+        price,
+        monthlyCondoFee
+      },
+      address: {
+        geoLocation: {
+          location: {
+            lat: latitude,
+            lon: longitude
+          }
+        }
+      }
+    } =  property
+
+    const isLatitudeBetweenBounding = ZAP_BOUNDING_BOX.minlat <= latitude && latitude <= ZAP_BOUNDING_BOX.maxlat
+    const isLongitudeBetweenBounding = ZAP_BOUNDING_BOX.minlon <= longitude && longitude <= ZAP_BOUNDING_BOX.maxlon
+    const isBetweenLocationBounding = isLatitudeBetweenBounding && isLongitudeBetweenBounding
+
+    let maximumRentalPriceByLocation = isBetweenLocationBounding ? (VIVA_REAL_MAXIMUM_RENTAL_PRICE + (VIVA_REAL_MAXIMUM_RENTAL_PRICE * 0.50)) : VIVA_REAL_MAXIMUM_RENTAL_PRICE
+
+    const rentalPrice = parseInt(rentalTotalPrice)
+    const salePrice= parseInt(price)
+    const monthlyCondoFeePrice = parseInt(monthlyCondoFee)
+
+    const isMonthlyCondoFeeValueValid = !isNaN(monthlyCondoFeePrice)
+    const isRental = businessType === BUSINESS_TYPE.RENTAL
+    const isSale = businessType === BUSINESS_TYPE.SALE
+    const hasMinimalRentalPrice = rentalPrice <= maximumRentalPriceByLocation
+    const hasMinimalSalePrice = salePrice <= VIVA_REAL_MAXIMUM_SELLING_PRICE
+    const rentalPercentageValue = rentalPrice * 0.30
+
+    const isMonthlyCondoFeeWithinLimit = monthlyCondoFeePrice < rentalPercentageValue
+
+    if (isRental) {
+      if (!isMonthlyCondoFeeValueValid) return false
+      
+      return isMonthlyCondoFeeWithinLimit && hasMinimalRentalPrice
+    }
+    
+    return isSale && hasMinimalSalePrice
+  }
+
   async function setProprietiesByAgency(props) {
     const zapProprieties = []
     const vivaRealProprieties = []
 
     props.forEach((property) => {
-      const { pricingInfos: { businessType, rentalTotalPrice, price } } =  property
+      const { address: { geoLocation: { location: { lat, lon } } } } =  property
 
-      const intRentalTotalPrice = parseInt(rentalTotalPrice)
-      const intPrice= parseInt(price)
+      if (!(lat && lon)) return
 
-      const isEligibleForZap = 
-      ((businessType === BUSINESS_TYPE.RENTAL) && (intRentalTotalPrice >= ZAP_MINIMAL_RENTAL_PRICE)) ||
-      ((businessType === BUSINESS_TYPE.SALE) && (intPrice >= ZAP_MINIMAL_SELLING_PRICE))
-
-      const isEligibleForViva = 
-      ((businessType === BUSINESS_TYPE.RENTAL) && (intRentalTotalPrice <= VIVA_REAL_MAXIMUM_RENTAL_PRICE)) ||
-      ((businessType === BUSINESS_TYPE.SALE) && (intPrice <= VIVA_REAL_MAXIMUM_SELLING_PRICE))
+      const isEligibleForZap = isElegibleForZap(property)
+      const isEligibleForViva = isElegibleForViva(property)
 
       if (isEligibleForZap) zapProprieties.push(property)
       if (isEligibleForViva) vivaRealProprieties.push(property)
