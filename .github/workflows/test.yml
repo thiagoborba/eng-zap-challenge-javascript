@@ -1,0 +1,21 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+    
+    steps:
+      - run: npm install -g yarn
+      - run: yarn
+      - run: yarn run build
+      - run: yarn test
+      - uses: jakejarvis/s3-sync-action@master
