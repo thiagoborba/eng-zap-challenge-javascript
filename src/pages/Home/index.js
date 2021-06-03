@@ -47,14 +47,15 @@ export const Home = ({ history }) => {
   const memoizedZapProprieties = useMemo(() => memoizedRenderCard(zapProprieties), [zapProprieties, memoizedRenderCard])
   const memoizedVivaRealProprieties = useMemo(() => memoizedRenderCard(vivaRealProprieties), [vivaRealProprieties, memoizedRenderCard])
   const memoizedHandlePaginationChange = useCallback(handlePaginationChange, [view])
+  const memoizedSetProprietiesByAgency = useCallback(setProprietiesByAgency, [])
 
   useEffect(() => {
     fetchProprieties();
   }, []);
 
   useEffect(() => {
-    setProprietiesByAgency(proprieties)
-  }, [proprieties])
+    memoizedSetProprietiesByAgency(proprieties)
+  }, [memoizedSetProprietiesByAgency, proprieties])
 
   useEffect(() => {
     memoizedHandlePaginationChange(1)
@@ -93,7 +94,7 @@ export const Home = ({ history }) => {
     const isLongitudeBetweenBounding = ZAP_BOUNDING_BOX.minlon <= longitude && longitude <= ZAP_BOUNDING_BOX.maxlon
     const isBetweenLocationBounding = isLatitudeBetweenBounding && isLongitudeBetweenBounding
 
-    let minimalSalesPriceByLocation = isBetweenLocationBounding ? (ZAP_MINIMAL_SELLING_PRICE - (ZAP_MINIMAL_SELLING_PRICE * 0.10)) : ZAP_MINIMAL_SELLING_PRICE
+    const minimalSalesPriceByLocation = isBetweenLocationBounding ? (ZAP_MINIMAL_SELLING_PRICE - (ZAP_MINIMAL_SELLING_PRICE * 0.10)) : ZAP_MINIMAL_SELLING_PRICE
 
     const rentalPrice = parseInt(rentalTotalPrice)
     const salePrice= parseInt(price)
@@ -136,7 +137,7 @@ export const Home = ({ history }) => {
     const isLongitudeBetweenBounding = ZAP_BOUNDING_BOX.minlon <= longitude && longitude <= ZAP_BOUNDING_BOX.maxlon
     const isBetweenLocationBounding = isLatitudeBetweenBounding && isLongitudeBetweenBounding
 
-    let maximumRentalPriceByLocation = isBetweenLocationBounding ? (VIVA_REAL_MAXIMUM_RENTAL_PRICE + (VIVA_REAL_MAXIMUM_RENTAL_PRICE * 0.50)) : VIVA_REAL_MAXIMUM_RENTAL_PRICE
+    const maximumRentalPriceByLocation = isBetweenLocationBounding ? (VIVA_REAL_MAXIMUM_RENTAL_PRICE + (VIVA_REAL_MAXIMUM_RENTAL_PRICE * 0.50)) : VIVA_REAL_MAXIMUM_RENTAL_PRICE
 
     const rentalPrice = parseInt(rentalTotalPrice)
     const salePrice= parseInt(price)
@@ -165,7 +166,9 @@ export const Home = ({ history }) => {
     const vivaRealProprieties = []
 
     props.forEach((property) => {
-      const { address: { geoLocation: { location: { lat, lon } } } } =  property
+      const { address } = property
+      const lat = address?.geoLocation?.location?.lat
+      const lon = address?.geoLocation?.location?.lon
 
       if (!(lat && lon)) return
 
@@ -192,7 +195,7 @@ export const Home = ({ history }) => {
 
   function renderCard (proprieties) {
     return proprieties?.map((property, i) =>
-      <Grid item xs key={property.id}>
+      <Grid data-testid={`grid-item-${i}`} item xs key={property.id}>
         <Card
           data-testid={`card-${i}`}
           onClick={() => {
