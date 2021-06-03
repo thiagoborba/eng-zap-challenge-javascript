@@ -30,18 +30,6 @@ const INITIAL_STATE = {
   }
 }
 
-// const TOAST_ERROR_PAYLOAD = {
-//   show: true,
-//   type: 'error',
-//   message: 'Não foi possível buscar os imoveis, tente novamente em alguns instantes'
-// }
-
-// const TOAST_SUCCESS_PAYLOAD = {
-//   show: true,
-//   type: 'success',
-//   message: 'Imoveis baixados com sucesso'
-// }
-
 export const Home = ({ history }) => {
   const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState(INITIAL_STATE)
 

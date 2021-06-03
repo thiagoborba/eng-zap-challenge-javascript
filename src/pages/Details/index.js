@@ -4,7 +4,7 @@ import { useContext } from '../../Store';
 import { getBusinessLabel, getPriceLabel } from '../../utils';
 
 export const Details = ({ history }) => {
-  const { resetSelectedProperty, state: { selectedProperty } }  = useContext()
+  const { state: { selectedProperty } }  = useContext()
 
   const {
     id,
@@ -80,7 +80,6 @@ export const Details = ({ history }) => {
         variant="outlined"
         color="primary"
         onClick={() => {
-          resetSelectedProperty()
           history.goBack()
         }}
       />

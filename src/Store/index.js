@@ -3,8 +3,6 @@ import { INITIAL_STATE, reducer, ActionType } from "../Reducer";
 
 const {
   UPDATE_SELECTED_PROPERTY,
-  RESET_SELECTED_PROPERTY,
-  UPDATE_TOAST
 } = ActionType;
 
 export const Context = createContext();
@@ -24,19 +22,9 @@ export function useContext() {
     dispatch({ type: UPDATE_SELECTED_PROPERTY, payload: property });
   }
 
-  function resetSelectedProperty() {
-    dispatch({ type: RESET_SELECTED_PROPERTY });
-  }
-
-  function toast(payload) {
-    dispatch({ type: UPDATE_TOAST, payload });
-  }
-
   function contextFunctions() {
     return {
       setSelectedProperty,
-      resetSelectedProperty,
-      toast
     };
   }
 
