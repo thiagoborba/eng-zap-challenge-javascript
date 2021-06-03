@@ -20,7 +20,6 @@ export function reducer(state, action) {
     case ActionType.RESET_SELECTED_PROPERTY:
       return { ...state, selectedProperty: INITIAL_STATE.selectedProperty };
     case ActionType.UPDATE_TOAST:
-      console.log(action)
       return { ...state, toast: action.payload };
     default: {
       return state;

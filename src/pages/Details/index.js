@@ -52,7 +52,7 @@ export const Details = ({ history }) => {
       />
       <Spacing height='16px'/>
       <TextField
-        label={'Banheios'}
+        label={'Banheiros'}
         value={bathrooms}
         disabled
       />

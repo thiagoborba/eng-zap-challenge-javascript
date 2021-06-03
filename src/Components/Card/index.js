@@ -63,7 +63,7 @@ export const Card = ({ property, onClick, ...props }) => {
         </Title>
         <Spacing height='8px' />
         <Title paragraph>
-          Banheios: { property.bathrooms }
+          Banheiros: { property.bathrooms }
         </Title>
         <Spacing height='8px' />
         <Title paragraph>

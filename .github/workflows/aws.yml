@@ -15,7 +15,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v1
-      - run: npm install -g yarn
+      - run: sudo npm install -g yarn
       - run: yarn
       - run: yarn run build
       - uses: jakejarvis/s3-sync-action@master

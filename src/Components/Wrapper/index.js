@@ -29,7 +29,6 @@ const useStyles = makeStyles(theme => ({
 
 export const Wrapper = (props) => {
   const classes = useStyles()
-  console.log(classes)
   return (
     <Box 
       { ...props }

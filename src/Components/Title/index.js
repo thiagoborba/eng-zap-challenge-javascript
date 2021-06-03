@@ -1,10 +1,17 @@
-import { Typography } from '@material-ui/core';
+import { Typography, makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    margin: 0
+  }
+}))
 
 export const Title = ({ ...props }) => {
+  const classes = useStyles()
   return (
     <Typography
       { ...props }
-      style={{ margin: 0 }}
+      className={classes.root}
     />
   )
 }

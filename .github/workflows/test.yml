@@ -14,7 +14,7 @@ jobs:
         node-version: [14.x]
     
     steps:
-      - run: npm install -g yarn
+      - run: sudo npm install -g yarn
       - run: yarn
       - run: yarn run build
       - run: yarn test
