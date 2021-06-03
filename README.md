@@ -23,7 +23,7 @@ Este projeto utiliza `yarn` para gerenciar os pacotes node, para instalar o `yar
 
 ### Como rodar o projeto numa imagem docker
 
-Você pode rodar o projeto em uma imagem docker, caso tenhe docker instalado em sua máquina. Veja <https://docs.docker.com/engine/install> caso precise instalar o docker.
+Você pode rodar o projeto em uma imagem docker, caso tenha o docker instalado em sua máquina. Veja <https://docs.docker.com/engine/install> caso precise instalar o docker.
 
 execute `sudo	docker build . -t react-docker` para criar a imagem docker <br />
 execute `sudo docker run -p 8000:80 react-docker` para rodar a imagem.
