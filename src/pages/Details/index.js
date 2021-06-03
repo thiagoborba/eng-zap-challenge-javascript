@@ -1,9 +1,5 @@
 import React from 'react';
 import { TextField, Spacing, Title, Button } from '../../Components';
-import {
-  BUSINESS_TYPE,
-  PAGE,
-} from '../../constants';
 import { useContext } from '../../Store'
 import { Container } from  '@material-ui/core'
 import { getBusinessLabel } from '../../utils'

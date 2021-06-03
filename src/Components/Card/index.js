@@ -31,8 +31,6 @@ const useStyles = makeStyles({
 export const Card = ({ property, onClick, ...props }) => {
   const classes = useStyles()
 
-  const { address: { city, neighborhood } } = property
-
   return (
     <MaterialCard { ...props } onClick={() => onClick(property)} className={classes.card}>
       <CardContent>
