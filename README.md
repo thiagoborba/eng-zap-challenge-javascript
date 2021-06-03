@@ -7,7 +7,7 @@ Este projeto é um simulacro do que seria uma plataforma digital imobiliária, o
 
 Você pode acessar <http://eng-zap-challenge-javascript.s3-website.us-east-2.amazonaws.com/> para ver o projeto no ar.
 
-Este projeto utiliza `yarn` para gerenciar os pacotes node, para instalar o `yarn` basta rodar o comando `npm install yarn --global`, pórem se preferir utilizar o npm poderá faze-lo sem problemas utilizando os mesmos comandos do `yarn`.
+Este projeto utiliza `yarn` para gerenciar os pacotes node, para instalar o `yarn` basta rodar o comando `npm install yarn --global`, porém se preferir utilizar o npm poderá faze-lo sem problemas utilizando os mesmos comandos do `yarn`.
 
 ### Como instalar
 
