@@ -32,22 +32,22 @@ const INITIAL_STATE = {
   }
 }
 
-const TOAST_ERROR_PAYLOAD = {
-  show: true,
-  type: 'error',
-  message: 'Não foi possível buscar os imoveis, tente novamente em alguns instantes'
-}
+// const TOAST_ERROR_PAYLOAD = {
+//   show: true,
+//   type: 'error',
+//   message: 'Não foi possível buscar os imoveis, tente novamente em alguns instantes'
+// }
 
-const TOAST_SUCCESS_PAYLOAD = {
-  show: true,
-  type: 'success',
-  message: 'Imoveis baixados com sucesso'
-}
+// const TOAST_SUCCESS_PAYLOAD = {
+//   show: true,
+//   type: 'success',
+//   message: 'Imoveis baixados com sucesso'
+// }
 
 export const Home = ({ history }) => {
   const [{ loading, zapProprieties, vivaRealProprieties, proprieties, view, pagination }, setState] = useState(INITIAL_STATE)
 
-  const { setSelectedProperty, toast }  = useContext()
+  const { setSelectedProperty }  = useContext()
 
   const isZapView = view === VIEW.ZAP
   const isVivaView = view === VIEW.VIVA
@@ -76,10 +76,8 @@ export const Home = ({ history }) => {
     try {
       setState((prevState) => ({ ...prevState, loading: true }));
       const proprieties = await getProperties();
-      toast(TOAST_SUCCESS_PAYLOAD)
       setState(prevState => ({ ...prevState, proprieties }))
     } catch (error) {
-      toast(TOAST_ERROR_PAYLOAD)
     } finally {
       setState((prevState) => ({ ...prevState, loading: false }));
     }
@@ -158,9 +156,6 @@ export const Home = ({ history }) => {
   }
 
   async function handleClickButtonFilter (view) {
-    if (!proprieties.length) {
-      return await fetchProprieties()
-    }
     setState(prevState => ({ ...prevState, view: view }))
   }
 
