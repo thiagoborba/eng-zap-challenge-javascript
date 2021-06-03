@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 import { getProperties } from '../../api';
-import { Card, Grid, Loader, Spacing, Title, Button, Wrapper } from '../../Components';
+import { Box, Button, Card, Grid, Loader, Pagination, Spacing, Title, Wrapper } from '../../Components';
 import {
   BUSINESS_TYPE,
   PAGE,
@@ -12,7 +10,7 @@ import {
   ZAP_MINIMAL_RENTAL_PRICE,
   ZAP_MINIMAL_SELLING_PRICE
 } from '../../constants';
-import { useContext } from '../../Store'
+import { useContext } from '../../Store';
 
 const INITIAL_STATE = {
   loading: false,

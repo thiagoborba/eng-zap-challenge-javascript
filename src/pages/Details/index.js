@@ -1,8 +1,7 @@
 import React from 'react';
-import { TextField, Spacing, Title, Button } from '../../Components';
-import { useContext } from '../../Store'
-import { Container } from  '@material-ui/core'
-import { getBusinessLabel } from '../../utils'
+import { Button, Container, Spacing, TextField, Title } from '../../Components';
+import { useContext } from '../../Store';
+import { getBusinessLabel, getPriceLabel } from '../../utils';
 
 export const Details = ({ history }) => {
   const { resetSelectedProperty, state: { selectedProperty } }  = useContext()
@@ -36,6 +35,12 @@ export const Details = ({ history }) => {
       <TextField
         label={'Tipo'}
         value={`imovel para ${getBusinessLabel(businessType)}`}
+        disabled
+      />
+      <Spacing height='16px'/>
+      <TextField
+        label={'Valor'}
+        value={getPriceLabel(selectedProperty.pricingInfos)}
         disabled
       />
       <Spacing height='16px'/>

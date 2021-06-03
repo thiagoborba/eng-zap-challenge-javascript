@@ -1,9 +1,8 @@
-import React from 'react'
-import { Routes } from './routes'
-import { Container, makeStyles } from '@material-ui/core';
-import { CssBaseline } from '@material-ui/core';
-import { Toast } from './Components'
-import { Provider } from './Store'
+import React from 'react';
+import { makeStyles } from '@material-ui/core';
+import { Container, CssBaseline, Toast } from './Components';
+import { Routes } from './routes';
+import { Provider } from './Store';
 
 const useStyles = makeStyles({
   root: {
