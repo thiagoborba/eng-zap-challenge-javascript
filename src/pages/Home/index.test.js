@@ -9,9 +9,27 @@ import { Context } from '../../Store'
 import { Home } from './index'
 import '@testing-library/jest-dom/extend-expect'
 
-const server = setupServer(
+const serverForScreenAction = setupServer(
   rest.get(PROPRIETIES_ENDPOINT, (req, res, ctx) => {
-    return res(ctx.json(fixtures))
+    return res(ctx.json(fixtures.getPropertiesResponse))
+  })
+)
+
+const serverBusinessRulesZap = setupServer(
+  rest.get(PROPRIETIES_ENDPOINT, (req, res, ctx) => {
+    return res(ctx.json([
+      ...fixtures.zapValidProperties,
+      ...fixtures.zapInvalidProperties,
+    ]))
+  })
+)
+
+const serverBusinessRulesViva = setupServer(
+  rest.get(PROPRIETIES_ENDPOINT, (req, res, ctx) => {
+    return res(ctx.json([
+      ...fixtures.vivaRealValidProperties,
+      ...fixtures.vivaRealInvalidProperties
+    ]))
   })
 )
 
@@ -34,55 +52,107 @@ const setup = async (initialState = INITIAL_STATE) => {
   return { component };
 };
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+describe('should test screen actions', () => {
+  beforeAll(() => serverForScreenAction.listen())
+  afterEach(() => serverForScreenAction.resetHandlers())
+  afterAll(() => serverForScreenAction.close())
 
-test('shoud render the page', async () => {
-  const {
-    component: { getByTestId },
-  } = await setup();
-
-  const loader = getByTestId('loader')
-
-  expect(loader).toBeVisible()
-  await waitFor(() => expect(loader).not.toBeVisible())
+  it('shoud render the page', async () => {
+    const {
+      component: { getByTestId },
+    } = await setup();
+  
+    const loader = getByTestId('loader')
+  
+    expect(loader).toBeVisible()
+    await waitFor(() => expect(loader).not.toBeVisible())
+  })
+  
+  it('should filter zap proprieties and click on the card', async () => {
+    const {
+      component: { getByTestId },
+    } = await setup();
+  
+    const loader = getByTestId('loader')
+  
+    expect(loader).toBeVisible()
+    await waitFor(() => expect(loader).not.toBeVisible())
+  
+    const ZapButton = getByTestId('zap-button')
+  
+    fireEvent.click(ZapButton)
+  
+    const card = getByTestId('card-0')
+  
+    fireEvent.click(card)
+  })
+  
+  it('should filter viva proprieties and click on the card', async () => {
+    const {
+      component: { getByTestId },
+    } = await setup();
+  
+    const loader = getByTestId('loader')
+  
+    expect(loader).toBeVisible()
+    await waitFor(() => expect(loader).not.toBeVisible())
+  
+    const vivaButton = getByTestId('viva-button')
+  
+    fireEvent.click(vivaButton)
+  
+    const card = getByTestId('card-0')
+  
+    fireEvent.click(card)
+  })
 })
 
-test('should filter zap proprieties and click on the card', async () => {
-  const {
-    component: { getByTestId },
-  } = await setup();
+describe('should test business rules zap', () => {
+  beforeAll(() => serverBusinessRulesZap.listen())
+  afterEach(() => serverBusinessRulesZap.resetHandlers())
+  afterAll(() => serverBusinessRulesZap.close())
 
-  const loader = getByTestId('loader')
+  it('should render valids properties for zap', async () => {
+    const {
+      component: { getByTestId, getAllByTestId },
+    } = await setup();
 
-  expect(loader).toBeVisible()
-  await waitFor(() => expect(loader).not.toBeVisible())
+    const loader = getByTestId('loader')
+  
+    expect(loader).toBeVisible()
+    await waitFor(() => expect(loader).not.toBeVisible())
+  
+    const zap = getByTestId('zap-button')
+  
+    fireEvent.click(zap)
 
-  const ZapButton = getByTestId('zap-button')
-
-  fireEvent.click(ZapButton)
-
-  const card = getByTestId('card-0')
-
-  fireEvent.click(card)
+    const container = getAllByTestId('container')[0]
+  
+    expect(container.children.length).toBe(2)
+  })
 })
 
-test('should filter viva proprieties and click on the card', async () => {
-  const {
-    component: { getByTestId },
-  } = await setup();
+describe('should test business rules viva', () => {
+  beforeAll(() => serverBusinessRulesViva.listen())
+  afterEach(() => serverBusinessRulesViva.resetHandlers())
+  afterAll(() => serverBusinessRulesViva.close())
 
-  const loader = getByTestId('loader')
-
-  expect(loader).toBeVisible()
-  await waitFor(() => expect(loader).not.toBeVisible())
-
-  const vivaButton = getByTestId('viva-button')
-
-  fireEvent.click(vivaButton)
-
-  const card = getByTestId('card-0')
-
-  fireEvent.click(card)
+  it('should render valids properties for viva', async () => {
+    const {
+      component: { getByTestId, getAllByTestId },
+    } = await setup();
+  
+    const loader = getByTestId('loader')
+  
+    expect(loader).toBeVisible()
+    await waitFor(() => expect(loader).not.toBeVisible())
+  
+    const viva = getByTestId('viva-button')
+  
+    fireEvent.click(viva)
+  
+    const container = getAllByTestId('container')[0]
+  
+    expect(container.children.length).toBe(2)
+  })
 })

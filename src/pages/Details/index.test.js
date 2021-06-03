@@ -7,7 +7,7 @@ import { Details } from './index'
 
 const INITIAL_STATE = {
   ...state,
-  selectedProperty: fixtures[2]
+  selectedProperty: fixtures.getPropertiesResponse[2]
 }
 
 const setup = async (initialState = INITIAL_STATE) => {
