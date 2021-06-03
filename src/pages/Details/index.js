@@ -23,7 +23,7 @@ export const Details = ({ history }) => {
       </Title>
       <Spacing height='40px'/>
       <Title paragraph align='center'>
-        Confira abaixo as fotos e as informações detalhadas do imóvel selecionado 
+        Confira abaixo as informações detalhadas do imóvel selecionado 
       </Title>
       <Spacing height='40px'/>
       <TextField
