@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useReducer } from 'react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { PROPRIETIES_ENDPOINT } from '../../api'
 import fixtures from '../../api/fixtures.json'
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import { INITIAL_STATE, reducer } from '../../Reducer'
+import { Context } from '../../Store'
 import { Home } from './index'
+import '@testing-library/jest-dom/extend-expect'
 
 const server = setupServer(
   rest.get(PROPRIETIES_ENDPOINT, (req, res, ctx) => {
@@ -13,10 +15,21 @@ const server = setupServer(
   })
 )
 
-const setup = async () => {
-  const push = jest.fn()
+const setup = async (initialState = INITIAL_STATE) => {
+  const push = jest.fn();
+
+  const Provider = ({ children }) => {
+    return (
+      <Context.Provider value={useReducer(reducer, initialState)}>
+        {children}
+      </Context.Provider>
+    );
+  };
+
   const component = render(
-    <Home history={{push}} />
+    <Provider>
+      <Home history={{ push }} />
+    </Provider>
   );
   return { component };
 };
