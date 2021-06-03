@@ -35,7 +35,7 @@ export const Card = ({ property, onClick, ...props }) => {
     <MaterialCard { ...props } onClick={() => onClick(property)} className={classes.card}>
       <CardContent>
         <Title variant='h5'>
-          Imovel para {getBusinessLabel(property.pricingInfos.businessType)}
+          Imóvel para {getBusinessLabel(property.pricingInfos.businessType)}
         </Title>
         <Spacing height='24px' />
         <Carousel

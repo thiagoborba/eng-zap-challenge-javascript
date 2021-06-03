@@ -19,7 +19,7 @@ export const Details = ({ history }) => {
   return (
     <Container style={{ maxWidth: 600 }}>
       <Title variant='h5' align='center'>
-        Detalhes do Imovel
+        Detalhes do imóvel
       </Title>
       <Spacing height='40px'/>
       <Title paragraph align='center'>
@@ -34,7 +34,7 @@ export const Details = ({ history }) => {
       <Spacing height='16px'/>
       <TextField
         label={'Tipo'}
-        value={`imovel para ${getBusinessLabel(businessType)}`}
+        value={`imóvel para ${getBusinessLabel(businessType)}`}
         disabled
       />
       <Spacing height='16px'/>
