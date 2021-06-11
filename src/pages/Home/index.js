@@ -4,7 +4,8 @@ import { Box, Button, Card, Grid, Loader, Pagination, Spacing, Title, Wrapper } 
 import {
   BUSINESS_TYPE,
   PAGE,
-  PAGE_SIZE, VIEW,
+  PAGE_SIZE,
+  VIEW,
   VIVA_REAL_MAXIMUM_RENTAL_PRICE,
   VIVA_REAL_MAXIMUM_SELLING_PRICE,
   ZAP_MINIMAL_RENTAL_PRICE,
@@ -181,11 +182,11 @@ export const Home = ({ history }) => {
 
     const pagination = {
       ZAP: {
-        totalOfPages: Number((zapProprieties.length / PAGE_SIZE).toFixed(0)),
+        totalOfPages: Math.ceil(Number((zapProprieties.length / PAGE_SIZE))),
         currentPage: 1,
       },
       VIVA: {
-        totalOfPages: Number((vivaRealProprieties.length / PAGE_SIZE).toFixed(0)),
+        totalOfPages: Math.ceil(Number((vivaRealProprieties.length / PAGE_SIZE))),
         currentPage: 1,
       }
     };
